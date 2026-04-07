@@ -11,32 +11,49 @@ public class ABP {
         return raiz == null;
     }
 
-    public void inserir(int valor) {
+    public void insert(int valor) {
         NodeABP novo = new NodeABP(valor);
         if (isEmpty()) {
             raiz = novo;
         } else {
             NodeABP p = raiz;
             while (p != null) {
-                if(valor < p.node) {
-                    if (p.esq == null) {
-                        p.esq = novo;
+                if(valor < p.getNode()) {
+                    if (p.getEsq() == null) {
+                        p.setEsq(novo);
                         break;
                     } else {
-                        p = p.esq;
+                        p = p.getEsq();
                     }
                 } else {
-                    if (p.dir == null) {
-                        p.dir = novo;
+                    if (p.getDir() == null) {
+                        p.setDir(novo);
                         break;
                     } else {
-                        p = p.dir;
+                        p = p.getDir();
                     }
                 }
             }
         }
     } 
     // fim inserir
+
+    public NodeABP search(int valor) {
+        NodeABP p = raiz;
+        while (p != null) {
+            if (valor == p.getNode()) {
+                return p;
+            } else if (valor < p.getNode()) {
+                p = p.getEsq();
+            } else {
+                p = p.getDir();
+            }
+        }
+        return null;
+    }
+    //fim buscar
+
+    
 
 } 
 // abp
