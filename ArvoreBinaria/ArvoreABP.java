@@ -69,6 +69,11 @@ public class ABP {
             }
         }
 
+        if (p == null) {
+            System.out.println("valor não encontrado");
+            return;
+        }
+
         //verificar aq filhos do no
         boolean temFilhoEsq = (p.getEsq() != null);
         boolean temFilhoDir= (p.getDir() != null);
@@ -82,16 +87,8 @@ public class ABP {
             } else {
                 pai.setDir(null);
             }
-        } else if (temFilhoEsq || temFilhoDir) { // CASO 2 = nó com 1 filho
-            NodeABP filhoUnico = (temFilhoEsq) ? p.getEsq() : p.getDir();
-            if (pai == null) {
-                raiz = filhoUnico;
-            } else if (p == pai.getEsq()) {
-                pai.setEsq(filhoUnico);
-            } else {
-                pai.setDir(filhoUnico);
-            }
-        } else { //CASO 3 - com 2 filhos
+            
+        } else if (temFilhoEsq && temFilhoDir) { //CASO 3 - com 2 filhos
             NodeABP paiSucessor = p;
             NodeABP sucessor = p.getDir();
 
@@ -106,6 +103,15 @@ public class ABP {
                 paiSucessor.setEsq(sucessor.getDir());
             } else {
                 paiSucessor.setDir(sucessor.getDir());
+            } 
+        } else { // CASO 2 = nó com 1 filho
+            NodeABP filhoUnico = (temFilhoEsq) ? p.getEsq() : p.getDir();
+            if (pai == null) {
+                raiz = filhoUnico;
+            } else if (p == pai.getEsq()) {
+                pai.setEsq(filhoUnico);
+            } else {
+                pai.setDir(filhoUnico);
             }
             System.out.println("removido node " + valor);
         }
