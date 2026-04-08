@@ -43,4 +43,14 @@ public class AVL extends ABP {
 
         return B;
     }
+
+    private NodeAVL rotacaoDuplaEsquerda(NodeAVL A) {
+        A.setDir(rotacaoDireita((NodeAVL) A.getDir()));
+        return rotacaoEsquerda(A);
+    }
+
+    private NodeAVL rotacaoDuplaDireita(NodeAVL A) {
+        A.setEsq(rotacaoEsquerda((NodeAVL) A.getEsq()));
+        return rotacaoDireita(A);
+    }
 }
