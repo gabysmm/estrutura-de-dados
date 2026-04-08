@@ -25,4 +25,22 @@ public class AVL extends ABP {
 
         return B;
     }
+
+    private NodeAVL rotacaoDireita(NodeAVL A) {
+        NodeAVL B  = (NodeAVL)  A.getEsq();
+
+        A.setEsq(B.getDir());
+        B.setDir(A);
+
+        int fbA = A.getFB();
+        int fbB = B.getFB();
+
+        int fbB_novo = fbB - 1 - Math.max(fbA, 0);
+        int fbA_novo = fbA - 1 + Math.min(fbB_novo, 0);
+
+        B.setFB(fbB_novo);
+        A.setFB(fbA_novo);
+
+        return B;
+    }
 }
