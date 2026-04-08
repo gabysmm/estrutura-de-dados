@@ -53,4 +53,23 @@ public class AVL extends ABP {
         A.setEsq(rotacaoEsquerda((NodeAVL) A.getEsq()));
         return rotacaoDireita(A);
     }
+
+    private NodeAVL balancear(NodeAVL node) {
+        if (node.getFB() == -2) {
+            NodeAVL filhoDir = (NodeAVL) node.getDir();
+            if (filhoDir.getFB() <= 0){
+                return rotacaoEsquerda(node);
+            } else {
+                return rotacaoDuplaEsquerda(node);
+            }
+        } else if (node.getFB() == 2) {
+            NodeAVL filhoEsq = (NodeAVL) node.getEsq();
+            if (filhoEsq.getFB() >= 0) {
+                return rotacaoDireita(node);
+            } else {
+                return rotacaoDuplaDireita(node);
+            }
+        }
+        return node;
+    }
 }
