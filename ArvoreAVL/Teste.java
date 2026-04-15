@@ -10,11 +10,9 @@ public class Teste {
         }
         avl.mostrar();
     
-        System.out.println("\nInserir 25");
+        System.out.println("\nInserir 25 e rotação simples esq em 15");
         avl.insert(25);
-        System.out.println("rotoção simples esquerda em 15");
         avl.mostrar();
-        
         System.out.println("\nremover 5");
         avl.remove(5);
         avl.mostrar();
