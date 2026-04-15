@@ -1,7 +1,7 @@
 package ArvoreBinaria;
 
 public class ABP {
-    NodeABP raiz;
+    public NodeABP raiz;
 
     public ABP() {
         this.raiz = null;

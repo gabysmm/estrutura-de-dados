@@ -1,14 +1,14 @@
 package ArvoreAVL;
-import ArvoreBinaria.NodeABP
+import ArvoreBinaria.NodeABP;
 
 public class NodeAVL extends NodeABP {
     private int fb;
-    private NodeAVL pai;
+    private NodeAVL Pai;
 
     public NodeAVL(int node) {
         super(node); //chama constructor 
         this.fb = 0; 
-        this.pai = null;
+        this.Pai = null;
     }
 
     public int getFB() {
@@ -18,10 +18,10 @@ public class NodeAVL extends NodeABP {
         this.fb = fb;
     }
 
-    public NodeAVL getpai() {
-        return pai;
+    public NodeAVL getPai() {
+        return Pai;
     }
     public void setPai(NodeAVL pai) {
-        this.pai = pai;
+        this.Pai = pai;
     }
 }

@@ -135,7 +135,7 @@ public class AVL extends ABP {
     @Override
     public void remove(int valor) {
         if (isEmpty()) {
-            System.out.println("arvore vazia");
+            System.out.println("arvore vazia (sem frutinhas aqui pra tirar)");
             return;
         }
         NodeAVL pai = null;
@@ -156,14 +156,26 @@ public class AVL extends ABP {
             NodeAVL suc = (NodeAVL) p.getDir();
             while (suc.getEsq() != null) { paiSuc = suc; suc = (NodeAVL) suc.getEsq(); }
             p.setNode(suc.getNode());
-            if (paiSuc.getEsq() == suc) paiSuc.setEsq(suc.getDir());
-            else paiSuc.setDir(suc.getDir());
+            if (paiSuc.getEsq() == suc) {
+                paiSuc.setEsq(suc.getDir());
+                if (suc.getDir() != null) ((NodeAVL) suc.getDir()).setPai(paiSuc);
+            } else {
+                paiSuc.setDir(suc.getDir());
+                if (suc.getDir() != null) ((NodeAVL) suc.getDir()).setPai(paiSuc);
+            }
             pai = paiSuc;
         } else {
             NodeAVL filho = (NodeAVL)(p.getEsq() != null ? p.getEsq() : p.getDir());
-            if (pai == null) raiz = filho;
-            else if (pai.getEsq() == p) pai.setEsq(filho);
-            else pai.setDir(filho);
+            if (pai == null) {
+                raiz = filho;
+                if (filho != null) filho.setPai(null);
+            } else if (pai.getEsq() == p) {
+                pai.setEsq(filho);
+                if (filho != null) filho.setPai(pai);
+            } else {
+                pai.setDir(filho);
+                if (filho != null) filho.setPai(pai);
+            }
         }
 
         // rebalanceia subindo
