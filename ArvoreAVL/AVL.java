@@ -18,7 +18,7 @@ public class AVL extends ABP {
         int fbB = B.getFB();
 
         int fbB_novo = fbB + 1 - Math.min(fbA, 0);
-        int fbA_novo = fbA + 1 + Math.max(fbB_noxo, 0);
+        int fbA_novo = fbA + 1 + Math.max(fbB_novo, 0);
 
         B.setFB(fbB_novo);
         A.setFB(fbA_novo);
@@ -71,5 +71,49 @@ public class AVL extends ABP {
             }
         }
         return node;
+    }
+
+    public void insert(int valor) {
+        if (isEmpty()) {
+            raiz = new NodeAVL(valor);
+            return;
+        }
+        // desce guardando pai
+        NodeAVL pai = null;
+        NodeAVL p = (NodeAVL) raiz;
+        while (p != null) {
+            pai = p;
+            if (valor < p.getNode()) p = (NodeAVL) p.getEsq();
+            else p = (NodeAVL) p.getDir();
+        }
+        // insert
+        NodeAVL novo = new NodeAVL(valor);
+        novo.setPai(pai);
+        if (valor < pai.getNode()) pai.setEsq(novo);
+        else pai.setDir(novo);
+
+        // sobe atualizando FB
+        NodeAVL atual = pai;
+        while (atual != null) {
+            if (valor < atual.getNode()) atual.setFB(atual.getFB() + 1);
+            else atual.setFB(atual.getFB() - 1);
+
+            if (atual.getFB() == 0) break; 
+            if (atual.getFB() == 2 || atual.getFB() == -2) {
+                NodeAVL novaRaiz = balancear(atual);
+                if (atual.getPai() == null) {
+                    raiz = novaRaiz; 
+                } else {
+                    if (atual.getPai().getEsq() == atual) {
+                        atual.getPai().setEsq(novaRaiz);
+                    } else {
+                        atual.getPai().setDir(novaRaiz);
+                    }
+                }
+                novaRaiz.setPai(atual.getPai());
+                break;
+            }
+            atual = (NodeAVL) atual.getPai();
+        }
     }
 }
