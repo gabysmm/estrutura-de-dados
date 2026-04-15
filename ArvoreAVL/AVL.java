@@ -6,6 +6,17 @@ public class AVL extends ABP {
     public AVL() {
         super(); //constructor da abp
     }
+    public void mostrar() {
+        mostrarRec((NodeAVL) raiz, 0);
+    }
+
+    private void mostrarRec(NodeAVL no, int nivel) {
+        if (no == null) return;
+        mostrarRec((NodeAVL) no.getDir(), nivel + 1);
+        for (int i = 0; i < nivel; i++) System.out.print("    ");
+        System.out.println(no.getNode() + " [" + no.getFB() + "]");
+        mostrarRec((NodeAVL) no.getEsq(), nivel + 1);
+    }
 
     private NodeAVL rotacaoEsquerda(NodeAVL A) {
         NodeAVL B = (NodeAVL) A.getDir();
@@ -73,6 +84,7 @@ public class AVL extends ABP {
         return node;
     }
 
+@Override
     public void insert(int valor) {
         if (isEmpty()) {
             raiz = new NodeAVL(valor);
@@ -100,20 +112,74 @@ public class AVL extends ABP {
 
             if (atual.getFB() == 0) break; 
             if (atual.getFB() == 2 || atual.getFB() == -2) {
+                NodeAVL paiDoAtual = atual.getPai();
                 NodeAVL novaRaiz = balancear(atual);
-                if (atual.getPai() == null) {
-                    raiz = novaRaiz; 
+                
+                if (paiDoAtual == null) {
+                    raiz = novaRaiz;
+                    novaRaiz.setPai(null);
                 } else {
-                    if (atual.getPai().getEsq() == atual) {
-                        atual.getPai().setEsq(novaRaiz);
+                    if (paiDoAtual.getEsq() == atual) {
+                        paiDoAtual.setEsq(novaRaiz);
                     } else {
-                        atual.getPai().setDir(novaRaiz);
+                        paiDoAtual.setDir(novaRaiz);
                     }
+                    novaRaiz.setPai(paiDoAtual);
                 }
-                novaRaiz.setPai(atual.getPai());
                 break;
             }
             atual = (NodeAVL) atual.getPai();
+        }
+    }
+
+    @Override
+    public void remove(int valor) {
+        if (isEmpty()) {
+            System.out.println("arvore vazia");
+            return;
+        }
+        NodeAVL pai = null;
+        NodeAVL p = (NodeAVL) raiz;
+        while (p != null && p.getNode() != valor) {
+            pai = p;
+            if (valor < p.getNode()) p = (NodeAVL) p.getEsq();
+            else p = (NodeAVL) p.getDir();
+        }
+        if (p == null) { System.out.println("valor nao encontrado"); return; }
+
+        if (p.getEsq() == null && p.getDir() == null) {
+            if (pai == null) raiz = null;
+            else if (pai.getEsq() == p) pai.setEsq(null);
+            else pai.setDir(null);
+        } else if (p.getEsq() != null && p.getDir() != null) {
+            NodeAVL paiSuc = p;
+            NodeAVL suc = (NodeAVL) p.getDir();
+            while (suc.getEsq() != null) { paiSuc = suc; suc = (NodeAVL) suc.getEsq(); }
+            p.setNode(suc.getNode());
+            if (paiSuc.getEsq() == suc) paiSuc.setEsq(suc.getDir());
+            else paiSuc.setDir(suc.getDir());
+            pai = paiSuc;
+        } else {
+            NodeAVL filho = (NodeAVL)(p.getEsq() != null ? p.getEsq() : p.getDir());
+            if (pai == null) raiz = filho;
+            else if (pai.getEsq() == p) pai.setEsq(filho);
+            else pai.setDir(filho);
+        }
+
+        // rebalanceia subindo
+        NodeAVL atual = pai;
+        while (atual != null) {
+            if (valor < atual.getNode()) atual.setFB(atual.getFB() - 1);
+            else atual.setFB(atual.getFB() + 1);
+            if (atual.getFB() == 2 || atual.getFB() == -2) {
+                NodeAVL novaRaiz = balancear(atual);
+                if (atual.getPai() == null) raiz = novaRaiz;
+                else if (atual.getPai().getEsq() == atual) atual.getPai().setEsq(novaRaiz);
+                else atual.getPai().setDir(novaRaiz);
+                novaRaiz.setPai(atual.getPai());
+                break;
+            }
+            atual = atual.getPai();
         }
     }
 }
