@@ -147,4 +147,72 @@ public class RubroNegra {
         }
         raiz.setCor(false); //raiz sempre preta
     }
+
+    public void remove(int valor) {
+        // encontrar o no q vai ser removido e o pai dele
+        NodeRN p = raiz;
+        NodeRN pai = null;
+        while (p != null && p.getNode() != valor) {
+            pai = p;
+            if (valor < p.getNode())
+                p = p.getEsq();
+            else
+                p = p.getDir();
+        }
+        if (p == null) {
+            return; //n encontrou 
+        } 
+
+        NodeRN filho = null;
+        NodeRN paiFilho = null;
+        boolean corOriginal = p.getCor();
+
+        // Caso 2 filhos
+        if (p.getEsq() != null && p.getDir() != null) {
+            NodeRN suc = p.getDir();
+            while (suc.getEsq() != null)
+                suc = suc.getEsq();
+
+            p.setNode(suc.getNode());      // copia o valor do sucessor
+            p = suc;                       // p aponta pro no q vai ser removido
+            corOriginal = p.getCor();      // atualiza a cor original
+            pai = p.getPai();              // atualiza o pai
+        }
+
+        // Caso 0 ou 1 filho 
+        filho = (p.getEsq() != null) ? p.getEsq() : p.getDir();
+        paiFilho = p.getPai();
+
+        if (filho != null)
+            filho.setPai(paiFilho);
+
+        if (paiFilho == null) {
+            raiz = filho;
+        } else if (p == paiFilho.getEsq()) {
+            paiFilho.setEsq(filho);
+        } else {
+            paiFilho.setDir(filho);
+        }
+
+        NodeRN v = p;           // coloquei p como v pra n me perder
+        NodeRN x = filho;       //no q entrou no lugar do removido
+
+        if (corOriginal == true && (x != null && x.getCor() == true)) {
+            return;
+        } else if (corOriginal == false && (x != null && x.getCor() == true)) {
+            x.setCor(false); 
+            return;
+        } else if (corOriginal == false && (x == null || x.getCor() == false)) {
+            situacao3(v, x, paiFilho);
+        } else if (corOriginal == true && (x == null || x.getCor() == false)) {
+            situacao4(v, x, paiFilho);
+        }
+    }
+
+    private void situacao4(NodeRN v, NodeRN x, NodeRN pai) {
+        if (x != null) {
+            x.setCor(true);
+        }
+        situacao3(v, x, pai);
+    }
 }
