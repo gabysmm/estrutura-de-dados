@@ -11,7 +11,9 @@ public class AVL extends ABP {
     private void mostrarRec(NodeAVL no, int nivel) {
         if (no == null) return;
         mostrarRec((NodeAVL) no.getDir(), nivel + 1);
-        for (int i = 0; i < nivel; i++) System.out.print("    ");
+        for (int i = 0; i < nivel; i++) {
+            System.out.print("    ");
+        }
         System.out.println(no.getNode() + " [" + no.getFB() + "]");
         mostrarRec((NodeAVL) no.getEsq(), nivel + 1);
     }
