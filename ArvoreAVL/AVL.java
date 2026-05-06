@@ -16,56 +16,56 @@ public class AVL extends ABP {
         mostrarRec((NodeAVL) no.getEsq(), nivel + 1);
     }
 
-    private NodeAVL rotacaoEsquerda(NodeAVL A) {
-        NodeAVL B = (NodeAVL) A.getDir();
-        A.setDir(B.getEsq());
-        if (B.getEsq() != null) ((NodeAVL) B.getEsq()).setPai(A);
+    private NodeAVL rotacaoEsquerda(NodeAVL B) { //a pra b 
+        NodeAVL A = (NodeAVL) B.getDir();
+        B.setDir(A.getEsq()); //pega filho de b //a pra b 
+        if (A.getEsq() != null) ((NodeAVL) A.getEsq()).setPai(B); //ajuste do ponteiro do ex filho de b
 
-        B.setEsq(A);
-        B.setPai(A.getPai());
-        A.setPai(B);
-
-        int fbA = A.getFB();
-        int fbB = B.getFB();
-
-        int fbA_novo = fbA + 1 - Math.min(fbB, 0);
-        int fbB_novo = fbB + 1 + Math.max(fbA, 0);
-
-        A.setFB(fbA_novo);
-        B.setFB(fbB_novo);
-
-        return B;
-    }
-
-    private NodeAVL rotacaoDireita(NodeAVL A) {
-        NodeAVL B = (NodeAVL) A.getEsq();
-        A.setEsq(B.getDir());
-        if (B.getDir() != null) ((NodeAVL) B.getDir()).setPai(A);
-
-        B.setDir(A);
-        B.setPai(A.getPai());
-        A.setPai(B);
+        A.setEsq(B); //rotaciona A pra ser filho de b e ajusta ponteiros pros pai certo
+        A.setPai(B.getPai()); 
+        B.setPai(A);
 
         int fbA = A.getFB();
         int fbB = B.getFB();
 
-        int fbA_novo = fbA - 1 - Math.max(fbB, 0);
-        int fbB_novo = fbB - 1 + Math.min(fbA, 0);
+        int fbB_novo = fbB + 1 - Math.min(fbA, 0);
+        int fbA_novo = fbA + 1 + Math.max(fbB_novo, 0);
 
         A.setFB(fbA_novo);
         B.setFB(fbB_novo);
 
-        return B;
+        return A;
     }
 
-    private NodeAVL rotacaoDuplaEsquerda(NodeAVL A) {
-        A.setDir(rotacaoDireita((NodeAVL) A.getDir()));
-        return rotacaoEsquerda(A);
+    private NodeAVL rotacaoDireita(NodeAVL B) {
+        NodeAVL A = (NodeAVL) B.getEsq();
+        B.setEsq(A.getDir());
+        if (A.getDir() != null) ((NodeAVL) A.getDir()).setPai(B);
+
+        A.setDir(B);
+        A.setPai(B.getPai());
+        B.setPai(A);
+
+        int fbA = A.getFB();
+        int fbB = B.getFB();
+
+        int fbB_novo = fbB - 1 - Math.max(fbA, 0);
+        int fbA_novo = fbA - 1 + Math.min(fbB_novo, 0);
+
+        A.setFB(fbA_novo);
+        B.setFB(fbB_novo);
+
+        return A;
     }
 
-    private NodeAVL rotacaoDuplaDireita(NodeAVL A) {
-        A.setEsq(rotacaoEsquerda((NodeAVL) A.getEsq()));
-        return rotacaoDireita(A);
+    private NodeAVL rotacaoDuplaEsquerda(NodeAVL B) {
+        B.setDir(rotacaoDireita((NodeAVL) B.getDir()));
+        return rotacaoEsquerda(B);
+    }
+
+    private NodeAVL rotacaoDuplaDireita(NodeAVL B) {
+        B.setEsq(rotacaoEsquerda((NodeAVL) B.getEsq()));
+        return rotacaoDireita(B);
     }
 
     private NodeAVL balancear(NodeAVL node) {
