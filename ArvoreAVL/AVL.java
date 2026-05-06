@@ -16,12 +16,12 @@ public class AVL extends ABP {
         mostrarRec((NodeAVL) no.getEsq(), nivel + 1);
     }
 
-    private NodeAVL rotacaoEsquerda(NodeAVL B) { //a pra b 
+    private NodeAVL rotacaoEsquerda(NodeAVL B) { 
         NodeAVL A = (NodeAVL) B.getDir();
-        B.setDir(A.getEsq()); //pega filho de b //a pra b 
-        if (A.getEsq() != null) ((NodeAVL) A.getEsq()).setPai(B); //ajuste do ponteiro do ex filho de b
+        B.setDir(A.getEsq()); //pega filho de A
+        if (A.getEsq() != null) ((NodeAVL) A.getEsq()).setPai(B); //ajuste do ponteiro do ex filho de A
 
-        A.setEsq(B); //rotaciona A pra ser filho de b e ajusta ponteiros pros pai certo
+        A.setEsq(B); //rotaciona B pra ser filho de A e ajusta ponteiros pros pai certo
         A.setPai(B.getPai()); 
         B.setPai(A);
 
@@ -71,17 +71,17 @@ public class AVL extends ABP {
     private NodeAVL balancear(NodeAVL node) {
         if (node.getFB() == -2) {
             NodeAVL dir = (NodeAVL) node.getDir();
-            if (dir.getFB() <= 0)
+            if (dir.getFB() <= 0) 
                 return rotacaoEsquerda(node);
             else
-                return rotacaoDuplaEsquerda(node);
+                return rotacaoDuplaEsquerda(node); //regrinha la do -2 +1 
         }
         if (node.getFB() == 2) {
             NodeAVL esq = (NodeAVL) node.getEsq();
             if (esq.getFB() >= 0)
                 return rotacaoDireita(node);
             else
-                return rotacaoDuplaDireita(node);
+                return rotacaoDuplaDireita(node); //regra do +2 -1 
         }
         return node;
     }
@@ -92,10 +92,11 @@ public class AVL extends ABP {
             raiz = new NodeAVL(valor);
             return;
         }
-        NodeAVL pai = null;
-        NodeAVL p = (NodeAVL) raiz;
 
-        while (p != null) {
+        NodeAVL pai = null;
+        NodeAVL p = (NodeAVL) raiz; //ponteiro q vai descer a arvore
+        //descendo
+        while (p != null) { 
             pai = p;
             if (valor < p.getNode())
                 p = (NodeAVL) p.getEsq();
@@ -106,29 +107,30 @@ public class AVL extends ABP {
         NodeAVL novo = new NodeAVL(valor);
         novo.setPai(pai);
 
-        if (valor < pai.getNode())
+        if (valor < pai.getNode()) 
             pai.setEsq(novo);
         else
             pai.setDir(novo);
 
+        //atualização de fbs
         NodeAVL atual = pai;
         NodeAVL filho = novo;
-
+        //subindo
         while (atual != null) {
             if (filho == atual.getEsq())
                 atual.setFB(atual.getFB() + 1);
             else
                 atual.setFB(atual.getFB() - 1);
-            if (atual.getFB() == 0)
+            if (atual.getFB() == 0) //antecessor for 0 a arvore ja abalanceou
                 break;
-            if (atual.getFB() == 2 || atual.getFB() == -2) {
+            if (atual.getFB() == 2 || atual.getFB() == -2) { //se antecessor tiver fb desbalanceado manda p corrigir
                 NodeAVL paiDoAtual = atual.getPai();
                 NodeAVL novaRaiz = balancear(atual);
 
-                if (paiDoAtual == null) {
+                if (paiDoAtual == null) { //atual parou na raiz ai vira raiz mesmo
                     raiz = novaRaiz;
                     novaRaiz.setPai(null);
-                } else {
+                } else { //atual era subarvore
                     if (paiDoAtual.getEsq() == atual)
                         paiDoAtual.setEsq(novaRaiz);
                     else
