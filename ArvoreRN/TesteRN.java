@@ -19,7 +19,7 @@ public class TesteRN {
         rn.insert(1);
         rn.mostrar();
 
-        System.out.println("\nRemover 8 (Situação 1: v vermelho, x vermelho)");
+        System.out.println("\nRemover 8 (Situação 3: duplo negro)");
         rn.remove(8);
         rn.mostrar();
 
@@ -47,10 +47,18 @@ public class TesteRN {
         rn.remove(15);
         rn.mostrar();
 
+        System.out.println("\ninsere 30");
+        rn.insert(30);
+        rn.mostrar();
+
+        System.out.println("\nRemover 30 (Situação 1: no folha)");
+        rn.remove(30);
+        rn.mostrar();
+
         System.out.println("\nRemover 25");
         rn.remove(25);
         rn.mostrar();
-        
+
         System.out.println("buscando 99 " + (rn.buscarNode(99) == null ? "Não encontrado" : "Encontrado"));
     }
 }
