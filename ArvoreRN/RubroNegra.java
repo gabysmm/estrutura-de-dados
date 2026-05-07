@@ -215,4 +215,90 @@ public class RubroNegra {
         }
         situacao3(v, x, pai);
     }
+
+    private void situacao3(NodeRN v, NodeRN x, NodeRN pai) {
+        while (x != raiz && (x == null || x.getCor() == false)) {
+                NodeRN paiAtual;
+                if (x == null) {
+                    paiAtual = pai;
+                } else {
+                    paiAtual = x.getPai();
+                }
+                if (paiAtual == null) break;
+
+                // Pega o irmão w
+                NodeRN w;
+                if (x == paiAtual.getEsq()) {
+                    w = paiAtual.getDir();
+                } else {
+                    w = paiAtual.getEsq();
+                }
+
+                // Caso 1 irmão vermelho
+                if (w != null && w.getCor() == true) {
+                    w.setCor(false);
+                    paiAtual.setCor(true);
+                    if (x == paiAtual.getEsq()) {
+                        rotacaoEsq(paiAtual);
+                        w = paiAtual.getDir();
+                    } else {
+                        rotacaoDir(paiAtual);
+                        w = paiAtual.getEsq();
+                    }
+                }
+
+                // Casos 2a/2b irmão preto com filhos pretos
+                if ((w.getEsq() == null || w.getEsq().getCor() == false) &&
+                (w.getDir() == null || w.getDir().getCor() == false)) {
+                        w.setCor(true);
+                        x = paiAtual;
+                        pai = x.getPai();
+                        if (x.getCor() == true) {
+                                x.setCor(false);
+                                break;
+                        }
+                        continue;
+                }
+
+                // Caso 3 irmão preto, filho interno vermelho
+                NodeRN filhoExterno, filhoInterno;
+                if (x == paiAtual.getEsq()) {
+                    filhoExterno = w.getDir();
+                    filhoInterno = w.getEsq();
+                } else {
+                    filhoExterno = w.getEsq();
+                    filhoInterno = w.getDir();
+                }
+
+                if (filhoExterno == null || filhoExterno.getCor() == false) {
+                   if (filhoInterno != null) {
+                        filhoInterno.setCor(false);
+                }
+                   w.setCor(true);
+                   if (x == paiAtual.getEsq()) {
+                        rotacaoDir(w);
+                        w = paiAtual.getDir();
+                   } else {
+                        rotacaoEsq(w);
+                        w = paiAtual.getEsq();
+                   }
+                }
+
+                // Caso 4 irmão preto, filho externo vermelho
+                w.setCor(paiAtual.getCor());
+                paiAtual.setCor(false);
+                if (filhoExterno != null) {
+                    filhoExterno.setCor(false);
+                }
+                if (x == paiAtual.getEsq()) {
+                    rotacaoEsq(paiAtual);
+                } else {
+                    rotacaoDir(paiAtual);
+                }
+                break;
+        }
+        if (raiz != null) {
+                raiz.setCor(false);
+        }
+    }
 }
