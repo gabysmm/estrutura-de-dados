@@ -17,7 +17,7 @@ public class RubroNegra {
         for (int i = 0; i < nivel; i++) {
             System.out.print("    ");
         }
-        String cor = no.getCor() ? "V" : "P";
+        String cor = no.getCor() ? "V" : "P"; //true vermelho false preto
         System.out.println(no.getNode() + "(" + cor + ")");
         mostrarRec(no.getEsq(), nivel + 1);
     }
@@ -41,7 +41,6 @@ public class RubroNegra {
         if(raiz == null) {
             raiz = novo;
             raiz.setCor(false); //pinta de preto pra n desobedecer regra
-            System.out.println("Primeiro nó é uma raiz, então foi inserido o valor " + valor + "na cor preto");
             return;
         }
 
@@ -73,7 +72,7 @@ public class RubroNegra {
         if (y.getEsq() != null) {
             y.getEsq().setPai(x);        
         }
-        y.setPai(x.getPai());            // quebra e y sobe pr o lugar de x
+        y.setPai(x.getPai());            // y passa a ver pai de x como pai
         if (x.getPai() == null) {
             raiz = y;                    
         } else if (x == x.getPai().getEsq()) {
@@ -81,7 +80,7 @@ public class RubroNegra {
         } else {
             x.getPai().setDir(y);
         }
-        y.setEsq(x);                     // x vira filho esq d y
+        y.setEsq(x);                     // x vira filho esq de y
         x.setPai(y);
     }
 
@@ -105,6 +104,7 @@ public class RubroNegra {
 
     public void balancearInsert(NodeRN no) {
         while (no != raiz && no.getPai() != null && no.getPai().getCor() == true) {
+            //ve quem é a familia do no inserido 
             NodeRN pai = no.getPai();
             NodeRN avo = pai.getPai();
             NodeRN tio;
@@ -121,7 +121,7 @@ public class RubroNegra {
                 avo.setCor(true);
                 no = avo; //sobe o no
             } else {
-                //caso 2 onde pai é vermelho e tem um tio folha preto
+                //caso 2 onde pai é vermelho e tem um tio folha ou preto
                 if (pai == avo.getEsq()) {
                     if (no == pai.getDir()) { //caso esq-dir 
                         rotacaoEsq(pai); //rotacao pai
@@ -174,16 +174,20 @@ public class RubroNegra {
                 suc = suc.getEsq();
 
             p.setNode(suc.getNode());      // copia o valor do sucessor
-            p = suc;                       // p aponta pro no q vai ser removido
-            corOriginal = p.getCor();      // atualiza a cor original
+            p = suc;                       // p aponta pro sucessor pra remover
+            corOriginal = p.getCor();      // atualiza a cor original p cor do no q sera remvido
             pai = p.getPai();              // atualiza o pai
         }
 
         // Caso 0 ou 1 filho 
-        filho = (p.getEsq() != null) ? p.getEsq() : p.getDir();
+        if (p.getEsq() != null) {
+            filho = p.getEsq(); 
+        } else {
+            filho = p.getDir();
+        }
         paiFilho = p.getPai();
 
-        if (filho != null)
+       if (filho != null)
             filho.setPai(paiFilho);
 
         if (paiFilho == null) {
@@ -191,7 +195,7 @@ public class RubroNegra {
         } else if (p == paiFilho.getEsq()) {
             paiFilho.setEsq(filho);
         } else {
-            paiFilho.setDir(filho);
+            paiFilho.setDir(filho); 
         }
 
         NodeRN v = p;           // coloquei p como v pra n me perder
@@ -205,20 +209,14 @@ public class RubroNegra {
         } else if (corOriginal == false && (x == null || x.getCor() == false)) {
             situacao3(v, x, paiFilho);
         } else if (corOriginal == true && (x != null && x.getCor() == false)) {
-            situacao4(v, x, paiFilho);
-        }
-    }
-
-    private void situacao4(NodeRN v, NodeRN x, NodeRN pai) {
-        if (x != null) {
             x.setCor(true);
+            situacao3(v, x, pai);
         }
-        situacao3(v, x, pai);
     }
 
     private void situacao3(NodeRN v, NodeRN x, NodeRN pai) {
         while (x != raiz && (x == null || x.getCor() == false)) {
-            NodeRN paiAtual;
+            NodeRN paiAtual; //procura quem é o pai
             if (x == null) {
                 paiAtual = pai;
             } else {
@@ -226,30 +224,28 @@ public class RubroNegra {
             }
             if (paiAtual == null) break;
 
-            // definindo irmão, sobrinho perto e sobrinho longe
+            // procura quem é irmão, sobrinho perto e sobrinho longe
             NodeRN irmao;
             NodeRN sobrinhoPerto = null;
             NodeRN sobrinhoLonge = null;
 
-            // Irmão é o filho oposto ao x
             if (x == paiAtual.getEsq()) {
                 irmao = paiAtual.getDir();
             } else {
                 irmao = paiAtual.getEsq();
             }
 
-            // Se existir irmão, define sobrinhos conforme o lado do irmão
             if (irmao != null) {
-                if (paiAtual.getEsq() == irmao) {   // irmão é filho esquerdo
-                    sobrinhoPerto = irmao.getDir(); // perto = direito
-                    sobrinhoLonge = irmao.getEsq(); // longe = esquerdo
-                } else {                            // irmão é filho direito
-                    sobrinhoPerto = irmao.getEsq(); // perto = esquerdo
-                    sobrinhoLonge = irmao.getDir(); // longe = direito
+                if (paiAtual.getEsq() == irmao) {   
+                    sobrinhoPerto = irmao.getDir(); 
+                    sobrinhoLonge = irmao.getEsq(); 
+                } else {                            
+                    sobrinhoPerto = irmao.getEsq(); 
+                    sobrinhoLonge = irmao.getDir(); 
                 }
             }
 
-            //Caso 1: irmão vermelho
+            // caso 1 irmão vermelho
             if (irmao != null && irmao.getCor() == true) {
                 irmao.setCor(false);
                 paiAtual.setCor(true);
@@ -259,7 +255,11 @@ public class RubroNegra {
                     rotacaoDir(paiAtual);
                 }
                 // recalcula irmão e sobrinhos após rotação
-                irmao = (x == paiAtual.getEsq()) ? paiAtual.getDir() : paiAtual.getEsq();
+                if (x == paiAtual.getEsq() {
+                    irmao = paiAtual.getDir();
+                } else {
+                    irmao = paiAtual.getEsq();
+                }
                 if (irmao != null) {
                     if (paiAtual.getEsq() == irmao) {
                         sobrinhoPerto = irmao.getDir();
@@ -271,26 +271,23 @@ public class RubroNegra {
                 }
             }
 
-            // ------------ Caso 2a/2b: irmão preto com filhos pretos ------------
+            // caso 2a e 2b irmão preto com filhos pretos
             if ((sobrinhoPerto == null || sobrinhoPerto.getCor() == false) && (sobrinhoLonge == null || sobrinhoLonge.getCor() == false) && (irmao == null || irmao.getCor() == false)) {
-                if (irmao != null) {
-                    irmao.setCor(true);
+                if (irmao != null) { 
+                    irmao.setCor(true); 
                 }
-                if (paiAtual.getCor() == false) {   // Caso 2a: pai negro → sobe duplo negro
+                if (paiAtual.getCor() == false) {   // caso 2a pai negro q recebe o duplo
                     x = paiAtual;
                     pai = x.getPai();
-                    continue;
-                } else {                            // Caso 2b: pai rubro → pinta de negro e termina
+                    continue; 
+                } else {                            // caso 2b pai rubro pinta de negro e duplo absorvido
                     paiAtual.setCor(false);
                     break;
                 }
              }
 
-            // ------------ Caso 3: sobrinho perto rubro, irmão negro ------------
-            if ((sobrinhoPerto != null && sobrinhoPerto.getCor() == true) &&
-               (irmao == null || irmao.getCor() == false) &&
-               (sobrinhoLonge == null || sobrinhoLonge.getCor() == false)) {
-
+            // caso 3 sobrinho perto rubro e irmão negro
+            if ((sobrinhoPerto != null && sobrinhoPerto.getCor() == true) && (irmao == null || irmao.getCor() == false) && (sobrinhoLonge == null || sobrinhoLonge.getCor() == false)) {
                 sobrinhoPerto.setCor(false);
                 if (irmao != null) {
                     irmao.setCor(true);
@@ -300,8 +297,12 @@ public class RubroNegra {
                         rotacaoDir(irmao);
                     }
                 }
-                // recalcula irmão e sobrinhos após rotação
-                irmao = (x == paiAtual.getEsq()) ? paiAtual.getDir() : paiAtual.getEsq();
+                // recalcula 
+                if (x == paiAtual.getEsq() {
+                    irmao = paiAtual.getDir();
+                } else {
+                    irmao = paiAtual.getEsq();
+                }
                 if (irmao != null) {
                     if (paiAtual.getEsq() == irmao) {
                         sobrinhoPerto = irmao.getDir();
@@ -309,14 +310,12 @@ public class RubroNegra {
                     } else {
                         sobrinhoPerto = irmao.getEsq();
                         sobrinhoLonge = irmao.getDir();
-                    }
-                }
-            }
+                    } 
+                } 
+            } 
 
-            // ------------ Caso 4: irmão negro e sobrinho longe rubro ------------
-            if ((irmao == null || irmao.getCor() == false) &&
-                (sobrinhoLonge != null && sobrinhoLonge.getCor() == true)) {
-
+            // caso 4 irmão negro e sobrinho longe rubro
+            if ((irmao == null || irmao.getCor() == false) && (sobrinhoLonge != null && sobrinhoLonge.getCor() == true)) {
                 if (irmao != null) {
                     irmao.setCor(paiAtual.getCor());
                     if (paiAtual.getDir() == irmao) {
@@ -329,10 +328,10 @@ public class RubroNegra {
                 if (sobrinhoLonge != null) {
                     sobrinhoLonge.setCor(false);
                 }
-                break;
+                break; //duplo negro absorvido ent acaba
             }
         }
-        if (raiz != null) {
+        if (raiz != null) { 
             raiz.setCor(false);
         }
     }
